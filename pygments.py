@@ -8,6 +8,13 @@ from pygments.lexers import PythonLexer
 from pygments.lexers.web import XmlLexer
 
 class OranjLexer(RegexLexer):
+    """
+    For `Oranj <http://github.com/pavpanchekha/oranj/tree/master>`_ source
+    code
+
+    *New in Pygments 1.1.*
+    """
+    
     name = "Oranj"
     aliases = ["oranj", "or"]
     filenames = ["*.or"]
@@ -16,30 +23,36 @@ class OranjLexer(RegexLexer):
         "root": [
             (r"[a-zA-Z0-9\$_]+(?=\s*=\s*fn)", Name.Function),
             (r"[a-zA-Z0-9\$_]+(?=\s*=\s*class)", Name.Class),
-            (r"\s+|;+", Whitespace),
-            (r"\b((is\s+not)|(aint)|mod|and|or|not|in|is)\b", Operator.Word),
+            (r"\s+|;+", Text),
+            (r"\b((is\s+not)|aint|mod|and|or|not|in|is)\b", Operator.Word),
             (r"[\./\+\-\*\|\^]", Operator),
             (r"(?<![<>])(\+|\-|\^|\/|\/\/|\*|<<|>>)\=(?![=<>])", Operator),
             (r"(?<![<>])\=(?![=<>])", Operator),
+            (r">=|=>", Operator),
             (r"[><!]|==", Operator),
-            (r"true|false|nil|inf", Keyword.Constant),
-            (r"self|block|runtime", Keyword.Psuedo),
+            (r"\b(true|false|nil|inf)\b", Keyword.Constant),
+            (r"\b(self|block|runtime)\b", Keyword.Psuedo),
             (r"[\[\{\(\)\}\]\,]", Punctuation),
-            (r"\b(catch|class|else|elif|finally|for|fn|yield|if|return|throw|try|while|with|del|extern|import|break|continue|assert|as)\b", Keyword.Reserved),
-            (r"""(?<![\.eE]|\d)(?:(?:[ \t]*[0-9])+)(?![ \t]*\.|\d|\w)""", Number.Integer),
-            (r"""(?<![\.eE]|\d)(?:0(?:\w))(?:(?:[ \t]*[0-9a-zA-Z])+)(?![ \t]*\.|\d|\w)""", Number.Integer),
-            (r"(?P<number>(?:(?:[ \t]*[0-9])+\.(?:[ \t]*[0-9])+)|(?:\.(?:[ \t]*[0-9])+)|(?:(?:[ \t]*[0-9])+\.))(?P<exponent>(?:[eE][+-]?(?:[ \t]*[0-9])*)?)", Number.Float),
-            (r"$$[a-zA-Z0-9\$_]+", Name.Function),
+            (r"\b(catch|class|else|elif|finally|for|fn|yield|if|return|throw"
+             r"|try|while|with|del|extern|import|break|continue|assert|as)\b",
+             Keyword.Reserved),
+            (r"(?<![\.eE]|\d)(?:(?:[ \t]*[0-9])+)(?![ \t]*\.|\d|\w)",
+             Number.Integer),
+            (r"(?<![\.eE]|\d)(?:0(?:\w))(?:(?:[ \t]*[0-9a-zA-Z])+)"
+             r"(?![ \t]*\.|\d|\w)", Number.Integer),
+            (r"(?P<number>(?:(?:[ \t]*[0-9])+\.(?:[ \t]*[0-9])+)|"
+             r"(?:\.(?:[ \t]*[0-9])+)|(?:(?:[ \t]*[0-9])+\.))"
+             r"(?P<exponent>(?:[eE][+-]?(?:[ \t]*[0-9])*)?)", Number.Float),
             (r"(?P<value>[a-zA-Z0-9\$_]+)", Name.Variable),
+            (r"\`(?P<value>[a-zA-Z0-9\$_]+)", String.Symbol),
 
             (r"#!", Comment.Preproc, "procdir"),
-            (r"\#.*", Comment),
+            (r"#.*", Comment),
 
-            #(r"""[a-z]*((['"])(?:\2\2)?)(?:\\\2|[^\1])*?\1""", String),
-            (r"'", String, "string1"),
-            (r'"', String, "string2"),
-            (r"'''", String, "string3"),
-            (r'"""', String, "string6"),
+            (r"'''", String, "tsstring"),
+            (r'"""', String, "tdstring"),
+            (r"'", String, "sstring"),
+            (r'"', String, "dstring"),
         ],
 
         "procdir": [
@@ -49,37 +62,41 @@ class OranjLexer(RegexLexer):
             (r".*", Comment, "#pop"),
         ],
 
-        "string1": [
+        "sstring": [
             (r"\\.", String.Escape),
             (r"'", String, "#pop"),
-            (r".", String),
+            (r'[^\\\']+', String),
+            (r'[\\\']', String),
         ],
 
-        "string2": [
+        "dstring": [
             (r"\\.", String.Escape),
             (r'"', String, "#pop"),
-            (r".", String),
+            (r'[^\\"]+', String),
+            (r'[\\"]', String),
         ],
 
-        "string3": [
+        "tsstring": [
             (r"\\.", String.Escape),
             (r"'''", String, "#pop"),
-            (r".", String),
+            (r"[^\\\']+", String),
+            (r'[\\\']', String),
         ],
 
-        "string6": [
+        "tdstring": [
             (r"\\.", String.Escape),
             (r'"""', String, "#pop"),
-            (r".", String),
+            (r"[^\\\"]+", String),
+            (r'[\\\"]', String),
         ],
 
         "python": [
             (r"\s*#!\s*}", Comment.Preproc, "#pop"),
-            (r".*\n", using(PythonLexer)),
+            (r"(?s).*?(?=\s*#!\s*})", using(PythonLexer)),
         ],
 
         "xml": [
             (r"\s*#!\s*}", Comment.Preproc, "#pop"),
-            (r".*\n", using(XmlLexer)),
+            (r"(?s).*?(?=\s*#!\s*})", using(XmlLexer)),
         ],
     }
