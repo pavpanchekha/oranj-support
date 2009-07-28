@@ -1,0 +1,13 @@
+
+Oranj-WSGI: WSGI interface for oranj
+====================================
+
+Oranj (http://wiki.github.com/pavpanchekha/oranj) is a pythonic,
+dynamic programming language.  WSGI is a python technology that allows
+for the embedding of python code within a web server (through CGI,
+FastCGI, or a server-specific module, such as Apache's
+mod_wsgi). Oranj-WSGI seeks to extend this technology to oranj
+scripts.
+
+Oranj-WSGI allows for basic server features, such as debugging
+messages, directory listings, access management and rewrite rules.
