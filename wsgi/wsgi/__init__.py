@@ -4,13 +4,25 @@ import oranj.core.interpreter as intp
 from execute import execfile
 
 def Application(f):
-    sys.path.append(os.path.dirname(f))
-    return application
+    """
+    To use, createa *.wsgi file containing:
 
-def application(environ, start_response):
+    import oranj.support.wsgi
+    application = oranj.support.wsgi.Application(__file__)
+    
+    """
+    
+    sys.path.append(os.path.dirname(f))
+    return lambda e, s: application(e, s, path=os.path.dirname(f))
+
+def application(environ, start_response, path=None):
     script = environ["PATH_INFO"][1:] # [1:] removes first slash
-    os.chdir(os.path.dirname(__file__))
-    sys.path.append(os.path.dirname(__file__))
+    
+    if not path:
+        path = os.path.dirname(__file__)
+        sys.path.append(path)
+    os.chdir(path)
+    
     import __config
 
     req, status, output = execfile(script, environ, __config)
