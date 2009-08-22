@@ -1,0 +1,23 @@
+# comment function keyword number preproc string symbol
+
+comment start "#"
+symbol = ".|/|+|-|*|\||^"
+symbol = '(\+|\-|\^|/|//|\*|<<|>>)\=', '=<|=>', '(<|>|!|=)=', '=='
+keyword = "true|false|nil|inf", "self|block|runtime"
+keyword = "catch|class|else|elif|finally|for|fn|yield|if|return|throw",
+          "try|while|with|del|extern|import|break|continue|assert|as"
+keyword = '\<is[:space:]+not\>'
+keyword = "aint|mod|and|or|not|in|is"
+number = '((([ \t]*[0-9])+\.([ \t]*[0-9])+)|(\.([ \t]*[0-9])+)|(([ \t]*[0-9])+\.))(([eE][+-]?([ \t]*[0-9])*)?)'
+number = '(0\w)(([ \t]*[0-9a-zA-Z])+)(?![ \t]*\.|\d|\w)'
+number = '(([0-9[:space:]])+)'
+
+preproc start "#!"
+preproc delim '\#\!.*\{' '\#\![:space:]*\}' multiline
+
+string = '`[a-zA-Z0-9\$_]+'
+string delim "'''" "'''" escape "\\" multiline
+string delim "\"\"\"" "\"\"\"" escape "\\" multiline
+string delim "'" "'" escape "\\"
+string delim "\"" "\"" escape "\\"
+

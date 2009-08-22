@@ -18,7 +18,7 @@ def rec_files(path):
 
 oranjpath = oranj.core.objects.about.mainpath[:-5]
 files = [(os.path.join(oranjpath, "support/wsgi/"), rec_files("wsgi/"))]
-files += [(os.path.join(oranjpath, "sitelib/wsgi/"), rec_files("or-wsgi/*"))]
+files += [(os.path.join(oranjpath, "sitelib/wsgi/"), rec_files("or-wsgi/"))]
 
 setup(name="wsgi/oranj",
       version="0.5",

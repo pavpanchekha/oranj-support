@@ -22,8 +22,11 @@ def application(environ, start_response, path=None):
         path = os.path.dirname(__file__)
         sys.path.append(path)
     os.chdir(path)
-    
-    import __config
+
+    try:
+        import __config
+    else:
+        import oranj.support.wsgi.config as __config
 
     req, status, output = execfile(script, environ, __config)
 

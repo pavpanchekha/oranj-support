@@ -1,0 +1,131 @@
+
+print = fn(req) {
+    if "fail" in req.GET {
+        0/0
+    }
+
+    io << """
+<!DOCTYPE html>
+<html>
+        <head>
+                <title>Success!</title>"""
+
+    io << """<style type="text/css">
+
+.highlight {font-family: "Courier New", "Vera Sans Mono", monospace;}
+.highlight .se {color: rgb(170, 50, 50); font-weight: bold;}
+
+* {
+   margin: 0;
+   padding: 0;
+}
+
+h1 {
+   border-bottom: 5px solid #4E9A06;
+   background: #8AE243;
+   padding: 10px;
+   font-weight: 900;
+   margin-bottom: 5px;
+}
+
+h2 {
+   color: #4E9A06;
+   padding: 5px;
+   margin: 5px 0;
+   border-bottom: 5px solid #4E9A06;
+}
+
+.highlight {
+    margin: 5px;
+    padding: 5px;
+    background: #CAFF87;
+}
+
+p {
+    margin: 5px;
+}
+
+table {
+    margin: auto;
+    width: 800px;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #4E9A06;
+    min-width: 300px;
+    padding: 3px;
+}
+
+th {
+    padding-top: 10px;
+}
+
+"""
+
+    try {
+        import py.pygments.formatters.HtmlFormatter
+        io << HtmlFormatter(style="perldoc").get_style_defs(".highlight")
+    } catch {}
+
+    io << """
+</style>
+"""
+                
+
+    io << """
+        </head>
+        <body>
+                <h1>Success!</h1>
+                <p>This page is being served from oranj. Here's some info about your server:</p>
+                <dl>
+                """
+
+    io << """<table>
+   <tbody>"""
+
+    io << "<tr><th colspan='2'>mod_wsgi variables</th></tr>"
+   
+    for i in req.keys() {
+        if i.startswith("mod_wsgi") {
+            io << "<tr><td>" << i << "</td><td>" << req[i] << "</td></tr>" << endl
+        }
+    }
+
+    io << "<tr><th colspan='2'>wsgi variables</th></tr>"
+    
+    for i in req.keys() {
+        if i.startswith("wsgi") {
+            io << "<tr><td>" << i << "</td><td>" << req[i] << "</td></tr>" << endl
+        }
+    }
+
+    io << "<tr><th colspan='2'>Environment variables</th></tr>"
+    
+    for i in req.keys() {
+        if not i.startswith("wsgi") and not i.startswith("mod_wsgi") {
+            io << "<tr><td>" << i << "</td><td>" << req[i] << "</td></tr>" << endl
+        }
+    }
+
+    io << "</tbody></table>"
+
+    io << "<p> To complete a test of oranj, add `<code>?fail=true</code>` to the end of the URL and make sure a ZeroDivisionError occurs </p>"
+    
+    io << "<h2> The code that generated this page: </h2>"
+
+    try {
+        import py.pygments.highlight
+        import py.pygments.formatters.HtmlFormatter
+        import py.oranj.support.pygments.OranjLexer
+        io << highlight(file("helloworld.or").read(), OranjLexer(), HtmlFormatter())
+    } catch {
+        io << """<pre class="highlight">""" << file(req["FilePath"]).read().replace("<", "&lt;") << """</pre>"""
+    }
+    
+    io << """</body>
+</html>
+"""
+
+    req["Content-type"] = "text/html"
+}
