@@ -25,7 +25,7 @@ def application(environ, start_response, path=None):
 
     try:
         import __config
-    else:
+    except ImportError:
         import oranj.support.wsgi.config as __config
 
     req, status, output = execfile(script, environ, __config)
